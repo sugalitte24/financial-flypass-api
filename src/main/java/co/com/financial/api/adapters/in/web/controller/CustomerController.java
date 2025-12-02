@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,15 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/customer")
+@RequiredArgsConstructor
 public class CustomerController {
 
     private final CustomerUseCase customerUseCase;
     private final CustomerMapper mapper;
-
-    public CustomerController( CustomerUseCase customerUseCase, CustomerMapper mapper ) {
-        this.customerUseCase = customerUseCase;
-        this.mapper = mapper;
-    }
 
     @PostMapping
     public ResponseEntity<CustomerResponse> createCustomer( @Valid @RequestBody CustomerRequest req ) {

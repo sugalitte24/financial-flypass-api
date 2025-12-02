@@ -10,4 +10,5 @@ public record AccountRequest(
         @NotBlank
         String accountType,
         boolean exemptGmf
-) {}
+) {
+}

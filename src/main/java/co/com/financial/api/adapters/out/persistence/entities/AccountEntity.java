@@ -63,7 +63,7 @@ public class AccountEntity extends BaseModel {
 
     @Column(name = "exempt_gmf", nullable = false)
     private boolean exemptGmf;
-    ;
+
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -78,6 +78,10 @@ public class AccountEntity extends BaseModel {
 
         if (this.accountType == AccountType.SAVINGS && this.status == null) {
             this.status = AccountStatus.ACTIVE;
+        }
+
+        if (this.accountType == AccountType.CURRENT && this.status == null) {
+            this.status = AccountStatus.INACTIVE;
         }
 
         if (this.balance == null) this.balance = BigDecimal.ZERO;
