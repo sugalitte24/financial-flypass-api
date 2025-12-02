@@ -1,0 +1,6 @@
+#Alert:Keep this file per branch and environment
+spring:
+  profiles:
+    active: ${SPRING_PROFILE_ACTIVE:dev}
+  application:
+    name: financial-api
