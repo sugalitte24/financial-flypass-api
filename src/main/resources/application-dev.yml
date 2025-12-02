@@ -4,6 +4,10 @@ spring:
   config:
     activate:
       on-profile: dev
+  security:
+    user:
+      name: admin
+      password: admin
   datasource:
     url: jdbc:postgresql://localhost:5432/flypass
     username: ${DB_USERNAME:postgres}
@@ -28,3 +32,7 @@ logging:
       springframework:
         web:
           filter: DEBUG
+
+jwt:
+  secret: change-me-to-a-very-long-random-secret-VERY-SECURE-REPLACE
+  expiration-ms: 3600000
