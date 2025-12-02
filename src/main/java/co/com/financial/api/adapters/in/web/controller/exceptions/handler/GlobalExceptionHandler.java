@@ -4,6 +4,7 @@ import co.com.financial.api.adapters.in.web.controller.exceptions.AlreadyExistEx
 import co.com.financial.api.adapters.in.web.controller.exceptions.GenericException;
 import co.com.financial.api.adapters.in.web.controller.exceptions.NotFoundException;
 import co.com.financial.api.adapters.in.web.controller.exceptions.UnauthorizedException;
+import co.com.financial.api.adapters.in.web.controller.exceptions.UnderAgeException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -31,10 +32,10 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI());
     }
 
-/*    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleUnexpected( Exception ex, HttpServletRequest request ) {
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno inesperado: " + ex.getCause(), request.getRequestURI());
-    }*/
+    @ExceptionHandler({UnderAgeException.class})
+    public ResponseEntity<ApiErrorResponse> underAge( UnderAgeException ex, HttpServletRequest request ) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI());
+    }
 
     @ExceptionHandler({AlreadyExistException.class})
     public ResponseEntity<ApiErrorResponse> alreadyExist( AlreadyExistException ex, HttpServletRequest request ) {

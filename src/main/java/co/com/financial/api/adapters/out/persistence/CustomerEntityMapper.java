@@ -16,7 +16,6 @@ public interface CustomerEntityMapper {
     @Mapping(target = "accounts", ignore = true)
     CustomerEntity toCustomerEntity( Customer domain );
 
-    @Mapping(target = "accounts", ignore = true)
     Customer toDomain( CustomerEntity customerEntity );
 
     void update( Customer customer, @MappingTarget CustomerEntity customerEntity );

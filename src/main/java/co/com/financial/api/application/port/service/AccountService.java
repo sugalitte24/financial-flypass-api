@@ -1,20 +1,16 @@
 package co.com.financial.api.application.port.service;
 
 import co.com.financial.api.adapters.in.web.controller.exceptions.NotFoundException;
-import co.com.financial.api.adapters.in.web.mappers.AccountMapper;
 import co.com.financial.api.adapters.out.persistence.enums.AccountStatus;
+import co.com.financial.api.adapters.out.persistence.enums.AccountType;
 import co.com.financial.api.application.port.in.AccountUseCase;
 import co.com.financial.api.application.port.out.AccountRepositoryPort;
 import co.com.financial.api.application.port.out.CustomerRepositoryPort;
-import co.com.financial.api.domain.enums.AccountType;
 import co.com.financial.api.domain.model.Account;
-import co.com.financial.api.domain.model.Customer;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,19 +21,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class AccountService implements AccountUseCase {
 
     private final AccountRepositoryPort repository;
-    private final AccountMapper mapper;
     private final CustomerRepositoryPort customerRepository;
 
     @Override
     public Account createAccount( Account account ) {
-        var owner = customerRepository.findById(account.getOwner().getId());
-        if (owner.isEmpty()) throw new NotFoundException("Owner not found");
+        if (account == null) throw new IllegalArgumentException("Account is required");
+        if (account.getOwnerId() == null) throw new IllegalArgumentException("ownerId is required");
 
-        var ownerShallow = new Customer();
-        ownerShallow.setId(owner.get().getId());
+        var ownerOpt = customerRepository.findById(account.getOwnerId());
+        if (ownerOpt.isEmpty()) throw new NotFoundException("Owner not found");
 
-        account.setOwner(ownerShallow);
-        account.setAccountNumber(generateAccountNumber(account.getAccountType()));
+        account.setAccountNumber(generateAccountNumber(String.valueOf(account.getAccountType())));
         return repository.save(account);
     }
 
@@ -71,27 +65,22 @@ public class AccountService implements AccountUseCase {
         repository.cancelAccount(id, performedBy);
     }
 
-    public String generateAccountNumber( AccountType accountType ) {
-        final Map<AccountType, AtomicLong> counters = new ConcurrentHashMap<>();
-        final Map<AccountType, String> PREFIX = Map.of(
-                AccountType.SAVINGS, "53",
-                AccountType.CURRENT, "33"
-        );
+    public String generateAccountNumber( String accountType ) {
+        String prefix = Objects.equals(accountType, "SAVINGS") ? "53" : "33";
+        String maxNumber = repository.findMaxAccountNumber(AccountType.valueOf(accountType));
 
-        counters.put(AccountType.SAVINGS, new AtomicLong(0));
-        counters.put(AccountType.CURRENT, new AtomicLong(0));
+        if (maxNumber == null) {
+            return prefix + "00000001";
+        }
 
-        AtomicLong counter = counters.get(accountType);
-        long next = counter.incrementAndGet();
+        long current = Long.parseLong(maxNumber.substring(2));
+        long next = current + 1;
 
         if (next > 99_999_999L) {
             throw new IllegalStateException("Sequence limit reached for account numbers");
         }
 
-        String prefix = PREFIX.get(accountType);
-        String padded = String.format("%08d", next);
-
-        return prefix + padded;
+        return prefix + String.format("%08d", next);
     }
 
 }
