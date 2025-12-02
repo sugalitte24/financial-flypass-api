@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: financial-api
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/flypass
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:admin}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /financial
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        web:
+          filter: DEBUG
