@@ -104,25 +104,5 @@ public class AccountEntity extends BaseModel {
             throw new IllegalStateException("Only accounts with zero balance can be cancelled");
         }
     }
-
-    public void credit( BigDecimal amount ) {
-        if (amount.signum() <= 0) throw new IllegalArgumentException("Amount must be positive");
-        this.balance = this.balance.add(amount);
-        this.availableBalance = this.availableBalance.add(amount);
-    }
-
-    public void debit( BigDecimal amount ) {
-        if (amount.signum() <= 0) throw new IllegalArgumentException("Amount must be positive");
-
-        if (this.accountType == AccountType.SAVINGS && this.balance.subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalStateException("Insufficient funds for savings account");
-        }
-        if (this.balance.subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalStateException("Insufficient funds");
-        }
-        this.balance = this.balance.subtract(amount);
-        this.availableBalance = this.availableBalance.subtract(amount);
-    }
-
 }
 

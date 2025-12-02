@@ -16,10 +16,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 )
 public interface AccountEntityMapper {
 
-    @Mapping(source = "owner.id", target = "owner", qualifiedByName = "ownerIdToEntity")
-    AccountEntity toCustomerEntity( Account domain );
+    @Mapping(source = "ownerId", target = "owner", qualifiedByName = "ownerIdToEntity")
+    AccountEntity toAccountEntity( Account domain );
 
-    @Mapping(target = "owner", ignore = true)
+    @Mapping(source = "owner.id", target = "ownerId")
     Account toDomain( AccountEntity accountEntity );
 
     @Mapping(target = "owner", ignore = true)

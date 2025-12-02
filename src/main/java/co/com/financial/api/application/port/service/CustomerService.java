@@ -1,11 +1,16 @@
 package co.com.financial.api.application.port.service;
 
 import co.com.financial.api.adapters.in.web.controller.exceptions.AlreadyExistException;
+import co.com.financial.api.adapters.in.web.controller.exceptions.GenericException;
 import co.com.financial.api.adapters.in.web.controller.exceptions.ResourceNotFoundException;
+import co.com.financial.api.adapters.in.web.controller.exceptions.UnderAgeException;
 import co.com.financial.api.adapters.in.web.mappers.CustomerMapper;
+import co.com.financial.api.adapters.out.persistence.repository.AccountRepository;
 import co.com.financial.api.application.port.in.CustomerUseCase;
 import co.com.financial.api.application.port.out.CustomerRepositoryPort;
 import co.com.financial.api.domain.model.Customer;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +24,7 @@ public class CustomerService implements CustomerUseCase {
 
     private final CustomerRepositoryPort repository;
     private final CustomerMapper mapper;
+    private final AccountRepository accountRepo;
 
     @Override
     public Customer createCustomer( Customer domain ) {
@@ -26,6 +32,7 @@ public class CustomerService implements CustomerUseCase {
                 .ifPresent(c -> {
                     throw new AlreadyExistException("Customer with same identification already exists");
                 });
+        validarMayorDeEdad(domain.getBirthDate());
         return repository.save(domain);
     }
 
@@ -51,7 +58,18 @@ public class CustomerService implements CustomerUseCase {
 
     @Override
     public void deleteCustomer( UUID id ) {
+        var accounts = accountRepo.findByOwner_Id(id);
+        if (!accounts.isEmpty()) throw new GenericException("Customer owns products and cannot be removed.");
         repository.deleteById(id);
     }
 
+    public void validarMayorDeEdad( LocalDate fechaNacimiento ) {
+        LocalDate hoy = LocalDate.now();
+
+        int edad = Period.between(fechaNacimiento, hoy).getYears();
+
+        if (edad < 18) {
+            throw new UnderAgeException("Must be of legal age. Current age: " + edad);
+        }
+    }
 }

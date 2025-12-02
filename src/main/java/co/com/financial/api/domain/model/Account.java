@@ -25,6 +25,24 @@ public class Account extends BaseModel {
     private BigDecimal balance;
     private BigDecimal availableBalance;
     private boolean exemptGmf;
-    private Customer owner;
+    private UUID ownerId;
+
+    public void credit( BigDecimal amount ) {
+        if (amount == null || amount.signum() <= 0) throw new IllegalArgumentException("Amount must be positive");
+        this.balance = this.balance.add(amount);
+        this.availableBalance = this.availableBalance.add(amount);
+    }
+
+    public void debit( BigDecimal amount ) {
+        if (amount == null || amount.signum() <= 0) throw new IllegalArgumentException("Amount must be positive");
+        if (this.accountType == AccountType.SAVINGS && this.balance.subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalStateException("Insufficient funds for savings");
+        }
+        if (this.balance.subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalStateException("Insufficient funds");
+        }
+        this.balance = this.balance.subtract(amount);
+        this.availableBalance = this.availableBalance.subtract(amount);
+    }
 }
 

@@ -1,4 +1,6 @@
 package co.com.financial.api.adapters.in.web.dto.transaction;
 
-public record WithdrawRequest(String fromAccountNumber, java.math.BigDecimal amount, String performedBy) {
+import java.math.BigDecimal;
+
+public record WithdrawRequest(String fromAccountNumber, BigDecimal amount, String performedBy) {
 }

@@ -1,4 +1,6 @@
 package co.com.financial.api.adapters.in.web.dto.transaction;
 
-public record DepositRequest(String toAccountNumber, java.math.BigDecimal amount, String performedBy) {
+import java.math.BigDecimal;
+
+public record DepositRequest(String toAccountNumber, BigDecimal amount, String performedBy) {
 }
