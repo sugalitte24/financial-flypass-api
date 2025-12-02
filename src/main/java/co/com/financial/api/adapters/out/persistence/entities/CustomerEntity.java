@@ -76,7 +76,7 @@ public class CustomerEntity extends BaseModel {
 
     @PrePersist
     protected void onCreate() {
-        if(this.id == null) this.id = UUID.randomUUID();
+        if (this.id == null) this.id = UUID.randomUUID();
         setCreatedAt(LocalDateTime.now());
     }
 
@@ -85,12 +85,12 @@ public class CustomerEntity extends BaseModel {
         setUpdatedAt(LocalDateTime.now());
     }
 
-    public void addAccount( AccountEntity account) {
+    public void addAccount( AccountEntity account ) {
         accounts.add(account);
         account.setOwner(this);
     }
 
-    public void removeAccount( AccountEntity account) {
+    public void removeAccount( AccountEntity account ) {
         accounts.remove(account);
         account.setOwner(null);
     }

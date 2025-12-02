@@ -31,10 +31,10 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI());
     }
 
-    @ExceptionHandler(Exception.class)
+/*    @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleUnexpected( Exception ex, HttpServletRequest request ) {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno inesperado: " + ex.getCause(), request.getRequestURI());
-    }
+    }*/
 
     @ExceptionHandler({AlreadyExistException.class})
     public ResponseEntity<ApiErrorResponse> alreadyExist( AlreadyExistException ex, HttpServletRequest request ) {

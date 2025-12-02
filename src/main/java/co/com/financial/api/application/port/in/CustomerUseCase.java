@@ -6,13 +6,13 @@ import java.util.UUID;
 
 public interface CustomerUseCase {
 
-    Customer createCustomer( Customer customer);
+    Customer createCustomer( Customer customer );
 
-    Customer updateCustomer(UUID id, Customer customer);
+    Customer updateCustomer( UUID id, Customer customer );
 
-    Customer getCustomerById(UUID id);
+    Customer getCustomerById( UUID id );
 
     List<Customer> getAllCustomers();
 
-    void deleteCustomer( UUID id);
+    void deleteCustomer( UUID id );
 }

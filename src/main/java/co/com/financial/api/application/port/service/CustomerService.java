@@ -23,7 +23,9 @@ public class CustomerService implements CustomerUseCase {
     @Override
     public Customer createCustomer( Customer domain ) {
         repository.findByIdentificationTypeAndNumber(domain.getIdentificationType(), domain.getIdentificationNumber())
-                .ifPresent(c -> { throw new AlreadyExistException("Customer with same identification already exists"); });
+                .ifPresent(c -> {
+                    throw new AlreadyExistException("Customer with same identification already exists");
+                });
         return repository.save(domain);
     }
 

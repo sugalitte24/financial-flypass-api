@@ -1,9 +1,9 @@
 package co.com.financial.api.adapters.in.web.controller;
 
 import co.com.financial.api.adapters.in.web.dto.account.AccountRequest;
-import co.com.financial.api.adapters.in.web.dto.account.AccountRequestUpdate;
 import co.com.financial.api.adapters.in.web.dto.account.AccountResponse;
 import co.com.financial.api.adapters.in.web.mappers.AccountMapper;
+import co.com.financial.api.adapters.out.persistence.enums.AccountStatus;
 import co.com.financial.api.application.port.in.AccountUseCase;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,24 +48,16 @@ public class AccountController {
         return ResponseEntity.ok(list);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AccountResponse> updateAccount( @PathVariable UUID id,
-                                                          @Valid @RequestBody AccountRequestUpdate req ) {
-        var updated = accountUseCase.updateAccount(id, mapper.toDomainUpdate(req));
-        return ResponseEntity.ok(mapper.toResponse(updated));
-    }
-
-
     @PatchMapping("/{id}/status")
-    public ResponseEntity<AccountResponse> changeStatus( @PathVariable UUID id,
-                                                         @RequestParam String status,
-                                                         @RequestParam String performedBy ) {
+    public ResponseEntity<String> changeStatus( @PathVariable UUID id,
+                                                @RequestParam AccountStatus status,
+                                                @RequestParam UUID performedBy ) {
         var updated = accountUseCase.changeStatus(id, status, performedBy);
-        return ResponseEntity.ok(mapper.toResponse(updated));
+        return ResponseEntity.ok((updated));
     }
 
     @PostMapping("/{id}/cancel")
-    public ResponseEntity<String> cancelAccount( @PathVariable UUID id, @RequestParam String performedBy ) {
+    public ResponseEntity<String> cancelAccount( @PathVariable UUID id, @RequestParam UUID performedBy ) {
         accountUseCase.cancelAccount(id, performedBy);
         return ResponseEntity.ok("Cancelada");
     }
